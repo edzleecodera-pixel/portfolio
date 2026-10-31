@@ -4,23 +4,24 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Edzlee M. Codera - Portfolio</title>
+    <meta name="description" content="Portfolio of Edzlee M. Codera, BSIT student and aspiring Cybersecurity Specialist.">
     <style>
       :root {
-        --color-bg: #0b0f17;
-        --color-bg-2: #111a2b;
-        --color-surface: rgba(22, 27, 34, 0.72);
+        --color-bg: #070b13;
+        --color-bg-2: #0e1626;
+        --color-surface: rgba(18, 24, 36, 0.66);
         --color-border: rgba(255, 255, 255, 0.09);
         --color-text: #e9eef6;
-        --color-muted: #aab4c4;
+        --color-muted: #a7b2c3;
         --color-accent: #58a6ff;
         --color-accent-2: #a371f7;
+        --color-accent-3: #3ddc97;
         --space: 1.5rem;
         --radius: 18px;
-        --maxw: 920px;
+        --maxw: 980px;
       }
 
       * { box-sizing: border-box; }
-
       html { scroll-behavior: smooth; }
 
       body {
@@ -37,20 +38,64 @@
         overflow-x: hidden;
       }
 
-      /* Animated floating accent orbs */
+      /* subtle grid overlay */
+      body::before {
+        content: "";
+        position: fixed; inset: 0;
+        z-index: 0; pointer-events: none;
+        background-image:
+          linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+        background-size: 48px 48px;
+        mask-image: radial-gradient(ellipse at 50% 30%, #000 20%, transparent 75%);
+        -webkit-mask-image: radial-gradient(ellipse at 50% 30%, #000 20%, transparent 75%);
+      }
+
+      /* Scroll progress bar */
+      .progress {
+        position: fixed; top: 0; left: 0;
+        height: 3px; width: 100%;
+        transform-origin: 0 50%;
+        transform: scaleX(0);
+        background: linear-gradient(90deg, var(--color-accent), var(--color-accent-2), var(--color-accent-3));
+        z-index: 100;
+        box-shadow: 0 0 12px rgba(88,166,255,0.8);
+      }
+
+      /* Particle network canvas */
+      #net {
+        position: fixed; inset: 0;
+        width: 100%; height: 100%;
+        z-index: 0; pointer-events: none;
+      }
+
+      /* Cursor glow */
+      .cursor-glow {
+        position: fixed; top: 0; left: 0;
+        width: 420px; height: 420px;
+        margin: -210px 0 0 -210px;
+        border-radius: 50%;
+        background: radial-gradient(circle, rgba(88,166,255,0.16), transparent 65%);
+        pointer-events: none;
+        z-index: 0;
+        transition: opacity 0.3s ease;
+        opacity: 0;
+        will-change: transform;
+      }
+
+      /* Floating orbs */
       .orb {
         position: fixed;
         border-radius: 50%;
-        filter: blur(60px);
-        opacity: 0.5;
+        filter: blur(70px);
+        opacity: 0.42;
         z-index: 0;
         pointer-events: none;
         animation: float 14s ease-in-out infinite;
       }
-      .orb.one { width: 320px; height: 320px; top: -80px; left: -60px;
-        background: var(--color-accent); }
-      .orb.two { width: 360px; height: 360px; bottom: -120px; right: -80px;
-        background: var(--color-accent-2); animation-delay: -5s; }
+      .orb.one { width: 320px; height: 320px; top: -80px; left: -60px; background: var(--color-accent); }
+      .orb.two { width: 360px; height: 360px; bottom: -120px; right: -80px; background: var(--color-accent-2); animation-delay: -5s; }
+      .orb.three { width: 220px; height: 220px; top: 45%; left: 60%; background: var(--color-accent-3); opacity: 0.18; animation-delay: -9s; }
 
       @keyframes float {
         0%, 100% { transform: translate(0, 0) scale(1); }
@@ -65,137 +110,290 @@
         padding: clamp(1.5rem, 5vw, 4rem) var(--space);
       }
 
-      /* Entrance + scroll-reveal animation */
+      /* Scroll reveal */
       .reveal {
         opacity: 0;
-        transform: translateY(26px);
-        transition: opacity 0.7s ease, transform 0.7s ease;
+        transform: translateY(32px) scale(0.98);
+        filter: blur(6px);
+        transition: opacity 0.8s cubic-bezier(.2,.7,.2,1), transform 0.8s cubic-bezier(.2,.7,.2,1), filter 0.8s ease;
       }
-      .reveal.visible { opacity: 1; transform: none; }
+      .reveal.visible { opacity: 1; transform: none; filter: none; }
 
+      /* ---------- HEADER ---------- */
       header {
         text-align: center;
         padding: clamp(2rem, 6vw, 4rem) var(--space) clamp(1.5rem, 4vw, 3rem);
       }
 
+      .avatar-wrap {
+        position: relative;
+        width: 170px; height: 170px;
+        margin: 0 auto 1.4rem;
+      }
+      .avatar-wrap::before {
+        content: "";
+        position: absolute; inset: -8px;
+        border-radius: 50%;
+        background: conic-gradient(from 0deg, var(--color-accent), var(--color-accent-2), var(--color-accent-3), var(--color-accent));
+        animation: spin 6s linear infinite;
+        filter: blur(10px);
+        opacity: 0.75;
+      }
+      .avatar-wrap::after {
+        content: "";
+        position: absolute; inset: -22px;
+        border-radius: 50%;
+        border: 1px dashed rgba(88,166,255,0.35);
+        animation: spin 22s linear infinite reverse;
+      }
+      @keyframes spin { to { transform: rotate(360deg); } }
+
       .avatar {
-        width: 150px; height: 150px;
-        margin: 0 auto 1.25rem;
-        padding: 4px; /* gradient ring around the photo */
+        position: relative;
+        width: 100%; height: 100%;
+        padding: 5px;
         border-radius: 50%;
         display: grid; place-items: center;
-        font-size: 2.4rem; font-weight: 700;
+        font-size: 2.6rem; font-weight: 700;
         color: #0b0f17;
         background: linear-gradient(135deg, var(--color-accent), var(--color-accent-2));
-        box-shadow: 0 10px 40px rgba(88, 166, 255, 0.35);
-        animation: pulse 4s ease-in-out infinite;
+        z-index: 1;
       }
       .avatar img {
         width: 100%; height: 100%;
         display: block;
         border-radius: 50%;
         object-fit: cover;
-        object-position: center top; /* keeps your face centered */
+        object-position: center top;
         background: #fff;
-      }
-      @keyframes pulse {
-        0%, 100% { box-shadow: 0 10px 40px rgba(88, 166, 255, 0.30); }
-        50% { box-shadow: 0 14px 54px rgba(163, 113, 247, 0.45); }
       }
 
       header h1 {
         margin: 0;
-        font-size: clamp(2rem, 6vw, 3.1rem);
+        font-size: clamp(2.1rem, 6.5vw, 3.4rem);
         letter-spacing: -0.02em;
-        background: linear-gradient(90deg, var(--color-text), var(--color-accent));
+        background: linear-gradient(90deg, var(--color-text), var(--color-accent), var(--color-accent-2), var(--color-text));
+        background-size: 250% 100%;
         -webkit-background-clip: text; background-clip: text;
         -webkit-text-fill-color: transparent;
+        animation: shimmer 7s linear infinite;
       }
+      @keyframes shimmer { to { background-position: -250% 0; } }
+
       header .role {
-        margin: 0.6rem 0 0;
+        margin: 0.7rem 0 0;
         color: var(--color-muted);
-        font-size: clamp(1rem, 3vw, 1.2rem);
+        font-size: clamp(1rem, 3vw, 1.25rem);
         letter-spacing: 0.04em;
+        min-height: 1.9em;
+        font-family: "Cascadia Code", "Fira Code", Consolas, monospace;
       }
-      .badge {
+      .role .prompt { color: var(--color-accent-3); margin-right: 0.5ch; }
+      .role .typed { color: var(--color-text); }
+      .caret {
         display: inline-block;
-        margin-top: 1rem;
-        padding: 0.35rem 0.9rem;
+        width: 0.6ch; height: 1.1em;
+        margin-left: 2px;
+        vertical-align: -0.15em;
+        background: var(--color-accent);
+        animation: blink 1s steps(1) infinite;
+      }
+      @keyframes blink { 50% { opacity: 0; } }
+
+      .badge {
+        position: relative;
+        display: inline-block;
+        margin-top: 1.1rem;
+        padding: 0.4rem 1rem;
         font-size: 0.85rem;
         color: var(--color-accent);
         border: 1px solid var(--color-border);
         border-radius: 999px;
         background: rgba(88, 166, 255, 0.08);
+        overflow: hidden;
       }
+      .badge::after {
+        content: "";
+        position: absolute; top: 0; left: -60%;
+        width: 40%; height: 100%;
+        background: linear-gradient(100deg, transparent, rgba(255,255,255,0.25), transparent);
+        transform: skewX(-20deg);
+        animation: sweep 4.5s ease-in-out infinite;
+      }
+      @keyframes sweep { 0% { left: -60%; } 55%, 100% { left: 140%; } }
 
+      .hero-cta {
+        margin-top: 1.6rem;
+        display: flex; gap: 0.8rem; justify-content: center; flex-wrap: wrap;
+      }
+      .btn {
+        display: inline-flex; align-items: center; gap: 0.5rem;
+        padding: 0.75rem 1.3rem;
+        border-radius: 12px;
+        text-decoration: none;
+        font-weight: 600; font-size: 0.95rem;
+        color: var(--color-text);
+        border: 1px solid var(--color-border);
+        background: var(--color-surface);
+        backdrop-filter: blur(8px);
+        transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+      }
+      .btn.primary {
+        color: #08101c;
+        border: none;
+        background: linear-gradient(135deg, var(--color-accent), var(--color-accent-2));
+        box-shadow: 0 8px 28px rgba(88,166,255,0.35);
+      }
+      .btn:hover { transform: translateY(-3px); box-shadow: 0 12px 34px rgba(88,166,255,0.35); border-color: rgba(88,166,255,0.5); }
+      .btn:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 3px; }
+
+      /* ---------- Shared ---------- */
       .section-title {
+        display: flex; align-items: center; gap: 0.8rem;
         font-size: 0.8rem;
         text-transform: uppercase;
         letter-spacing: 0.2em;
         color: var(--color-accent);
         margin: 0 0 1rem;
       }
+      .section-title::after {
+        content: "";
+        flex: 1; height: 1px;
+        background: linear-gradient(90deg, rgba(88,166,255,0.5), transparent);
+      }
+      .section-heading {
+        margin: 0 0 1.2rem;
+        font-size: clamp(1.4rem, 4vw, 1.9rem);
+        letter-spacing: -0.01em;
+      }
 
-      .about {
+      /* Glass card with tilt + spotlight */
+      .glass {
+        --mx: 50%; --my: 50%; --rx: 0deg; --ry: 0deg;
+        position: relative;
         background: var(--color-surface);
         border: 1px solid var(--color-border);
         border-radius: var(--radius);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        transform: perspective(900px) rotateX(var(--rx)) rotateY(var(--ry));
+        transition: transform 0.25s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+        overflow: hidden;
+      }
+      .glass::before {
+        content: "";
+        position: absolute; inset: 0;
+        background: radial-gradient(380px circle at var(--mx) var(--my), rgba(88,166,255,0.16), transparent 55%);
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        pointer-events: none;
+      }
+      .glass:hover { border-color: rgba(88,166,255,0.45); box-shadow: 0 20px 55px rgba(0,0,0,0.5), 0 0 0 1px rgba(88,166,255,0.12); }
+      .glass:hover::before { opacity: 1; }
+
+      /* ---------- About ---------- */
+      .about {
         padding: clamp(1.4rem, 4vw, 2.2rem);
-        backdrop-filter: blur(10px);
         margin-bottom: var(--space);
       }
       .about p { margin: 0; color: var(--color-muted); }
       .about p + p { margin-top: 0.8rem; }
 
+      /* ---------- Highlights ---------- */
       main {
         display: grid;
         gap: var(--space);
         grid-template-columns: 1fr;
         padding: 0 0 var(--space);
       }
-
-      .card {
-        background: var(--color-surface);
-        border: 1px solid var(--color-border);
-        border-radius: var(--radius);
-        padding: clamp(1.3rem, 3.5vw, 1.8rem);
-        backdrop-filter: blur(10px);
-        transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
-      }
-      .card:hover {
-        transform: translateY(-6px);
-        border-color: rgba(88, 166, 255, 0.45);
-        box-shadow: 0 18px 50px rgba(0, 0, 0, 0.45);
-      }
+      .card { padding: clamp(1.3rem, 3.5vw, 1.8rem); }
       .card .icon {
         font-size: 1.6rem;
         display: inline-grid; place-items: center;
-        width: 48px; height: 48px;
-        border-radius: 12px;
+        width: 52px; height: 52px;
+        border-radius: 14px;
         margin-bottom: 0.8rem;
-        background: linear-gradient(135deg, rgba(88,166,255,0.18), rgba(163,113,247,0.18));
+        background: linear-gradient(135deg, rgba(88,166,255,0.2), rgba(163,113,247,0.2));
+        transition: transform 0.4s cubic-bezier(.2,.9,.3,1.4);
       }
-      .card h2 { margin: 0 0 0.4rem; font-size: 1.15rem; color: var(--color-text); }
+      .card:hover .icon { transform: rotate(-8deg) scale(1.15); }
+      .card h2 { margin: 0 0 0.4rem; font-size: 1.15rem; }
       .card p { margin: 0; color: var(--color-muted); font-size: 0.97rem; }
+
+      /* ---------- Stack & Skills ---------- */
+      .block { margin-top: clamp(2rem, 5vw, 3rem); }
+
+      .grid {
+        display: grid;
+        gap: var(--space);
+        grid-template-columns: 1fr;
+      }
+
+      .group { padding: 1.4rem 1.5rem; }
+      .group h3 {
+        margin: 0 0 0.9rem;
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        letter-spacing: 0.14em;
+        color: var(--color-muted);
+        display: flex; align-items: center; gap: 0.5rem;
+      }
+      .group h3 .dot {
+        width: 8px; height: 8px; border-radius: 50%;
+        background: var(--color-accent-3);
+        box-shadow: 0 0 10px var(--color-accent-3);
+        animation: ping 2.4s ease-in-out infinite;
+      }
+      @keyframes ping { 0%,100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.45; transform: scale(0.7); } }
+
+      .chips { display: flex; flex-wrap: wrap; gap: 0.55rem; }
+      .chip {
+        position: relative;
+        padding: 0.42rem 0.9rem;
+        font-size: 0.92rem;
+        color: var(--color-text);
+        border-radius: 999px;
+        border: 1px solid var(--color-border);
+        background: rgba(255,255,255,0.04);
+        cursor: default;
+        transition: transform 0.25s cubic-bezier(.2,.9,.3,1.4), border-color 0.25s ease, background 0.25s ease, box-shadow 0.25s ease, color 0.25s ease;
+      }
+      .chip:hover {
+        transform: translateY(-4px) scale(1.06);
+        color: #fff;
+        border-color: rgba(88,166,255,0.7);
+        background: linear-gradient(135deg, rgba(88,166,255,0.22), rgba(163,113,247,0.22));
+        box-shadow: 0 8px 22px rgba(88,166,255,0.3);
+      }
+
+      /* chips pop in once their group is visible */
+      .reveal .chip { opacity: 0; transform: translateY(10px) scale(0.9); }
+      .reveal.visible .chip {
+        opacity: 1; transform: none;
+        transition: opacity 0.5s ease, transform 0.5s cubic-bezier(.2,.9,.3,1.4), border-color 0.25s ease, background 0.25s ease, box-shadow 0.25s ease, color 0.25s ease;
+        transition-delay: calc(var(--i, 0) * 70ms + 250ms);
+      }
+      .reveal.visible .chip:hover { transition-delay: 0ms; transform: translateY(-4px) scale(1.06); }
 
       @media (min-width: 640px) {
         main { grid-template-columns: repeat(3, 1fr); }
+        .grid.two { grid-template-columns: repeat(2, 1fr); }
+        .grid.three { grid-template-columns: repeat(2, 1fr); }
+      }
+      @media (min-width: 860px) {
+        .grid.three { grid-template-columns: repeat(3, 1fr); }
       }
 
+      /* ---------- Footer ---------- */
       footer {
         text-align: center;
-        padding: clamp(1.5rem, 4vw, 2.5rem) var(--space) var(--space);
+        padding: clamp(2rem, 5vw, 3rem) var(--space) var(--space);
       }
-      .links {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 0.8rem;
-        justify-content: center;
-      }
+      footer .section-title { justify-content: center; }
+      footer .section-title::after { display: none; }
+      .links { display: flex; flex-wrap: wrap; gap: 0.8rem; justify-content: center; }
       .links a {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
+        display: inline-flex; align-items: center; gap: 0.5rem;
         padding: 0.7rem 1.15rem;
         color: var(--color-text);
         text-decoration: none;
@@ -203,23 +401,19 @@
         border-radius: 12px;
         background: var(--color-surface);
         backdrop-filter: blur(8px);
-        transition: transform 0.25s ease, border-color 0.25s ease, color 0.25s ease, background 0.25s ease;
+        transition: transform 0.25s ease, border-color 0.25s ease, color 0.25s ease, background 0.25s ease, box-shadow 0.25s ease;
       }
       .links a:hover {
-        transform: translateY(-3px);
+        transform: translateY(-4px);
         color: var(--color-accent);
-        border-color: rgba(88, 166, 255, 0.5);
-        background: rgba(88, 166, 255, 0.1);
+        border-color: rgba(88,166,255,0.5);
+        background: rgba(88,166,255,0.1);
+        box-shadow: 0 10px 28px rgba(88,166,255,0.25);
       }
-      .links a:focus-visible {
-        outline: 2px solid var(--color-accent);
-        outline-offset: 3px;
-      }
-      .copyright {
-        margin-top: 1.4rem;
-        color: var(--color-muted);
-        font-size: 0.85rem;
-      }
+      .links a:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 3px; }
+      .copyright { margin-top: 1.4rem; color: var(--color-muted); font-size: 0.85rem; }
+
+      @media (hover: none) { .cursor-glow { display: none; } }
 
       @media (prefers-reduced-motion: reduce) {
         *, *::before, *::after {
@@ -227,26 +421,39 @@
           transition: none !important;
           scroll-behavior: auto !important;
         }
-        .reveal { opacity: 1; transform: none; }
+        .reveal, .reveal .chip { opacity: 1 !important; transform: none !important; filter: none !important; }
+        .glass { transform: none !important; }
       }
     </style>
   </head>
   <body>
+    <div class="progress" id="progress" aria-hidden="true"></div>
+    <canvas id="net" aria-hidden="true"></canvas>
+    <div class="cursor-glow" id="glow" aria-hidden="true"></div>
     <div class="orb one" aria-hidden="true"></div>
     <div class="orb two" aria-hidden="true"></div>
+    <div class="orb three" aria-hidden="true"></div>
 
     <div class="wrap">
       <header class="reveal">
-        <div class="avatar">
-          <img src="profile.jpg" alt="Photo of Edzlee M. Codera"
-               onerror="this.parentNode.textContent='EC'">
+        <div class="avatar-wrap">
+          <div class="avatar">
+            <img src="profile.jpg" alt="Photo of Edzlee M. Codera"
+                 onerror="this.parentNode.textContent='EC'">
+          </div>
         </div>
         <h1>Edzlee M. Codera</h1>
-        <p class="role">Student</p>
+        <p class="role" aria-label="BSIT Student and aspiring Cybersecurity Specialist">
+          <span class="prompt">$</span><span class="typed" id="typed"></span><span class="caret"></span>
+        </p>
         <span class="badge">BSIT Student | Aspiring Cybersecurity Specialist</span>
+        <div class="hero-cta">
+          <a class="btn primary" href="#stack">&#128736;&#65039; View Tech Stack</a>
+          <a class="btn" href="#contact">&#9993; Get in touch</a>
+        </div>
       </header>
 
-      <section class="about reveal" aria-label="About">
+      <section class="about glass tilt reveal" aria-label="About">
         <p class="section-title">About</p>
         <p>Hi! I'm Edzlee M. Codera, a Bachelor of Science in Information Technology (BSIT) student with a strong interest in technology and cybersecurity. I am an aspiring Cybersecurity Specialist who is passionate about learning how to protect systems, networks, and digital information from online threats.</p>
         <p>As a student, I am continuously developing my knowledge and skills in information technology, particularly in cybersecurity, networking, programming, and computer systems. I enjoy exploring new technologies, solving problems, and learning how things work behind the scenes.</p>
@@ -255,24 +462,84 @@
       </section>
 
       <main aria-label="Highlights">
-        <article class="card reveal">
+        <article class="card glass tilt reveal">
           <div class="icon" aria-hidden="true">&#128218;</div>
           <h2>Learning</h2>
           <p>Diving into Cybersecurity Fundamentals, Networking and Network Security, Python Programming, Linux and Command Line, Ethical Hacking, and Web Development.</p>
         </article>
-        <article class="card reveal">
+        <article class="card glass tilt reveal">
           <div class="icon" aria-hidden="true">&#128161;</div>
           <h2>Curious</h2>
           <p>I enjoy exploring how technology works, understanding how systems are built, and discovering new ways to solve problems. I'm always curious about cybersecurity, ethical hacking, and the technology behind keeping the digital world safe.</p>
         </article>
-        <article class="card reveal">
+        <article class="card glass tilt reveal">
           <div class="icon" aria-hidden="true">&#128640;</div>
           <h2>Building</h2>
           <p>Projects are on the way. This space will grow as I create and ship more.</p>
         </article>
       </main>
 
-      <footer class="reveal">
+      <!-- TECH STACK -->
+      <section class="block" id="stack" aria-label="Tech Stack and Tools">
+        <p class="section-title reveal">Toolbox</p>
+        <h2 class="section-heading reveal">&#128736;&#65039; Tech Stack &amp; Tools</h2>
+        <div class="grid three">
+          <div class="group glass tilt reveal">
+            <h3><span class="dot"></span>Languages</h3>
+            <div class="chips"><span class="chip" style="--i:0">Python</span></div>
+          </div>
+          <div class="group glass tilt reveal">
+            <h3><span class="dot"></span>Automation Platform</h3>
+            <div class="chips"><span class="chip" style="--i:0">Activepieces</span></div>
+          </div>
+          <div class="group glass tilt reveal">
+            <h3><span class="dot"></span>AI Assistants / Tools</h3>
+            <div class="chips"><span class="chip" style="--i:0">Claude</span></div>
+          </div>
+          <div class="group glass tilt reveal">
+            <h3><span class="dot"></span>Development &amp; Collaboration</h3>
+            <div class="chips">
+              <span class="chip" style="--i:0">VSCode</span>
+              <span class="chip" style="--i:1">GitHub</span>
+            </div>
+          </div>
+          <div class="group glass tilt reveal">
+            <h3><span class="dot"></span>Deployment &amp; Hosting</h3>
+            <div class="chips"><span class="chip" style="--i:0">Vercel</span></div>
+          </div>
+          <div class="group glass tilt reveal">
+            <h3><span class="dot"></span>Design / Specialty Tools</h3>
+            <div class="chips"><span class="chip" style="--i:0">Kiro</span></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SKILLS -->
+      <section class="block" id="skills" aria-label="Skills and Core Competencies">
+        <p class="section-title reveal">Strengths</p>
+        <h2 class="section-heading reveal">&#129504; Skills &amp; Core Competencies</h2>
+        <div class="grid two">
+          <div class="group glass tilt reveal">
+            <h3><span class="dot"></span>Workflow Automation</h3>
+            <div class="chips">
+              <span class="chip" style="--i:0">Gmail</span>
+              <span class="chip" style="--i:1">Google Sheets</span>
+              <span class="chip" style="--i:2">Google Drive</span>
+              <span class="chip" style="--i:3">Google Forms</span>
+            </div>
+          </div>
+          <div class="group glass tilt reveal">
+            <h3><span class="dot"></span>Problem Solving &amp; Logic</h3>
+            <div class="chips">
+              <span class="chip" style="--i:0">Analytical Skills</span>
+              <span class="chip" style="--i:1">Algorithms</span>
+              <span class="chip" style="--i:2">Computer Programming</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <footer class="reveal" id="contact">
         <p class="section-title">Get in touch</p>
         <div class="links">
           <a href="mailto:coderaedzlee@gmail.com">&#9993; Email</a>
@@ -284,23 +551,140 @@
     </div>
 
     <script>
-      // Scroll-reveal: add .visible when each .reveal element enters the viewport.
       (function () {
+        var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+        /* ---- Scroll reveal ---- */
         var els = document.querySelectorAll(".reveal");
         if (!("IntersectionObserver" in window)) {
           els.forEach(function (el) { el.classList.add("visible"); });
-          return;
+        } else {
+          var io = new IntersectionObserver(function (entries) {
+            entries.forEach(function (entry, i) {
+              if (entry.isIntersecting) {
+                entry.target.style.transitionDelay = (i * 80) + "ms";
+                entry.target.classList.add("visible");
+                io.unobserve(entry.target);
+              }
+            });
+          }, { threshold: 0.12 });
+          els.forEach(function (el) { io.observe(el); });
         }
-        var io = new IntersectionObserver(function (entries) {
-          entries.forEach(function (entry, i) {
-            if (entry.isIntersecting) {
-              entry.target.style.transitionDelay = (i * 80) + "ms";
-              entry.target.classList.add("visible");
-              io.unobserve(entry.target);
-            }
+
+        /* ---- Scroll progress ---- */
+        var bar = document.getElementById("progress");
+        function onScroll() {
+          var h = document.documentElement.scrollHeight - window.innerHeight;
+          var p = h > 0 ? window.scrollY / h : 0;
+          bar.style.transform = "scaleX(" + p + ")";
+        }
+        window.addEventListener("scroll", onScroll, { passive: true });
+        onScroll();
+
+        /* ---- Typing effect ---- */
+        var typed = document.getElementById("typed");
+        var phrases = [
+          "BSIT Student",
+          "Aspiring Cybersecurity Specialist",
+          "Python Learner",
+          "Ethical Hacking Enthusiast",
+          "Workflow Automation Builder"
+        ];
+        if (reduce) {
+          typed.textContent = phrases[1];
+        } else {
+          var pi = 0, ci = 0, del = false;
+          (function tick() {
+            var word = phrases[pi];
+            typed.textContent = word.slice(0, ci);
+            var delay = del ? 35 : 75;
+            if (!del && ci === word.length) { del = true; delay = 1500; }
+            else if (del && ci === 0) { del = false; pi = (pi + 1) % phrases.length; delay = 350; }
+            else { ci += del ? -1 : 1; }
+            setTimeout(tick, delay);
+          })();
+        }
+
+        /* ---- Tilt + spotlight on cards ---- */
+        var canHover = window.matchMedia("(hover: hover)").matches;
+        if (canHover && !reduce) {
+          document.querySelectorAll(".tilt").forEach(function (el) {
+            el.addEventListener("mousemove", function (e) {
+              var r = el.getBoundingClientRect();
+              var x = e.clientX - r.left, y = e.clientY - r.top;
+              el.style.setProperty("--mx", x + "px");
+              el.style.setProperty("--my", y + "px");
+              el.style.setProperty("--ry", ((x / r.width - 0.5) * 7).toFixed(2) + "deg");
+              el.style.setProperty("--rx", ((0.5 - y / r.height) * 7).toFixed(2) + "deg");
+            });
+            el.addEventListener("mouseleave", function () {
+              el.style.setProperty("--rx", "0deg");
+              el.style.setProperty("--ry", "0deg");
+            });
           });
-        }, { threshold: 0.12 });
-        els.forEach(function (el) { io.observe(el); });
+        }
+
+        /* ---- Cursor glow ---- */
+        var glow = document.getElementById("glow");
+        var mouse = { x: -9999, y: -9999 };
+        if (canHover && !reduce) {
+          window.addEventListener("mousemove", function (e) {
+            mouse.x = e.clientX; mouse.y = e.clientY;
+            glow.style.opacity = 1;
+            glow.style.transform = "translate(" + e.clientX + "px," + e.clientY + "px)";
+          });
+          document.addEventListener("mouseleave", function () { glow.style.opacity = 0; });
+        }
+
+        /* ---- Particle network background ---- */
+        var canvas = document.getElementById("net");
+        var ctx = canvas.getContext("2d");
+        var W, H, dpr, pts = [];
+        function resize() {
+          dpr = Math.min(window.devicePixelRatio || 1, 2);
+          W = window.innerWidth; H = window.innerHeight;
+          canvas.width = W * dpr; canvas.height = H * dpr;
+          ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+          var count = Math.min(90, Math.floor((W * H) / 16000));
+          pts = [];
+          for (var i = 0; i < count; i++) {
+            pts.push({
+              x: Math.random() * W, y: Math.random() * H,
+              vx: (Math.random() - 0.5) * 0.35, vy: (Math.random() - 0.5) * 0.35,
+              r: Math.random() * 1.4 + 0.6
+            });
+          }
+        }
+        function draw() {
+          ctx.clearRect(0, 0, W, H);
+          for (var i = 0; i < pts.length; i++) {
+            var p = pts[i];
+            p.x += p.vx; p.y += p.vy;
+            if (p.x < 0 || p.x > W) p.vx *= -1;
+            if (p.y < 0 || p.y > H) p.vy *= -1;
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+            ctx.fillStyle = "rgba(120,180,255,0.75)";
+            ctx.fill();
+            for (var j = i + 1; j < pts.length; j++) {
+              var q = pts[j], dx = p.x - q.x, dy = p.y - q.y, d = dx * dx + dy * dy;
+              if (d < 14400) {
+                ctx.strokeStyle = "rgba(88,166,255," + (0.22 * (1 - d / 14400)).toFixed(3) + ")";
+                ctx.lineWidth = 1;
+                ctx.beginPath(); ctx.moveTo(p.x, p.y); ctx.lineTo(q.x, q.y); ctx.stroke();
+              }
+            }
+            var mx = p.x - mouse.x, my = p.y - mouse.y, md = mx * mx + my * my;
+            if (md < 22500) {
+              ctx.strokeStyle = "rgba(163,113,247," + (0.5 * (1 - md / 22500)).toFixed(3) + ")";
+              ctx.beginPath(); ctx.moveTo(p.x, p.y); ctx.lineTo(mouse.x, mouse.y); ctx.stroke();
+            }
+          }
+          requestAnimationFrame(draw);
+        }
+        resize();
+        window.addEventListener("resize", resize);
+        if (reduce) { draw = function () {}; } else { draw(); }
       })();
     </script>
   </body>
