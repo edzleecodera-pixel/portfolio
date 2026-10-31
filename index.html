@@ -1,4 +1,4 @@
-﻿<!doctype html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="utf-8">
@@ -79,8 +79,9 @@
       }
 
       .avatar {
-        width: 112px; height: 112px;
+        width: 150px; height: 150px;
         margin: 0 auto 1.25rem;
+        padding: 4px; /* gradient ring around the photo */
         border-radius: 50%;
         display: grid; place-items: center;
         font-size: 2.4rem; font-weight: 700;
@@ -88,6 +89,14 @@
         background: linear-gradient(135deg, var(--color-accent), var(--color-accent-2));
         box-shadow: 0 10px 40px rgba(88, 166, 255, 0.35);
         animation: pulse 4s ease-in-out infinite;
+      }
+      .avatar img {
+        width: 100%; height: 100%;
+        display: block;
+        border-radius: 50%;
+        object-fit: cover;
+        object-position: center top; /* keeps your face centered */
+        background: #fff;
       }
       @keyframes pulse {
         0%, 100% { box-shadow: 0 10px 40px rgba(88, 166, 255, 0.30); }
@@ -228,7 +237,10 @@
 
     <div class="wrap">
       <header class="reveal">
-        <div class="avatar" aria-hidden="true">EC</div>
+        <div class="avatar">
+          <img src="profile.jpg" alt="Photo of Edzlee M. Codera"
+               onerror="this.parentNode.textContent='EC'">
+        </div>
         <h1>Edzlee M. Codera</h1>
         <p class="role">Student</p>
         <span class="badge">BSIT Student | Aspiring Cybersecurity Specialist</span>
