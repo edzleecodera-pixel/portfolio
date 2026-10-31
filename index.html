@@ -1,117 +1,293 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="en">
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Personal Portfolio</title>
+    <title>Edzlee M. Codera - Portfolio</title>
     <style>
-      /* Theme tokens: single source of truth. All literal colour values
-         live here on :root; every other rule references them via var(). */
       :root {
-        --color-bg: #0d1117;
-        --color-surface: #161b22;
-        --color-text: #e6edf3;
-        --color-muted: #c9d1d9;
+        --color-bg: #0b0f17;
+        --color-bg-2: #111a2b;
+        --color-surface: rgba(22, 27, 34, 0.72);
+        --color-border: rgba(255, 255, 255, 0.09);
+        --color-text: #e9eef6;
+        --color-muted: #aab4c4;
         --color-accent: #58a6ff;
+        --color-accent-2: #a371f7;
         --space: 1.5rem;
+        --radius: 18px;
+        --maxw: 920px;
       }
+
+      * { box-sizing: border-box; }
+
+      html { scroll-behavior: smooth; }
 
       body {
         margin: 0;
-        background: var(--color-bg);
+        min-height: 100vh;
+        font-family: "Segoe UI", system-ui, -apple-system, Roboto, Helvetica, Arial, sans-serif;
         color: var(--color-text);
+        background:
+          radial-gradient(1100px 600px at 12% -10%, rgba(88, 166, 255, 0.16), transparent 60%),
+          radial-gradient(900px 600px at 100% 0%, rgba(163, 113, 247, 0.14), transparent 55%),
+          linear-gradient(160deg, var(--color-bg), var(--color-bg-2));
+        background-attachment: fixed;
+        line-height: 1.6;
+        overflow-x: hidden;
       }
 
-      main {
-        display: grid;
-        gap: var(--space);
-        padding: var(--space);
-        /* mobile-first default: single column, applies at <=480px */
-        grid-template-columns: 1fr;
+      /* Animated floating accent orbs */
+      .orb {
+        position: fixed;
+        border-radius: 50%;
+        filter: blur(60px);
+        opacity: 0.5;
+        z-index: 0;
+        pointer-events: none;
+        animation: float 14s ease-in-out infinite;
       }
+      .orb.one { width: 320px; height: 320px; top: -80px; left: -60px;
+        background: var(--color-accent); }
+      .orb.two { width: 360px; height: 360px; bottom: -120px; right: -80px;
+        background: var(--color-accent-2); animation-delay: -5s; }
+
+      @keyframes float {
+        0%, 100% { transform: translate(0, 0) scale(1); }
+        50% { transform: translate(30px, -24px) scale(1.08); }
+      }
+
+      .wrap {
+        position: relative;
+        z-index: 1;
+        max-width: var(--maxw);
+        margin: 0 auto;
+        padding: clamp(1.5rem, 5vw, 4rem) var(--space);
+      }
+
+      /* Entrance + scroll-reveal animation */
+      .reveal {
+        opacity: 0;
+        transform: translateY(26px);
+        transition: opacity 0.7s ease, transform 0.7s ease;
+      }
+      .reveal.visible { opacity: 1; transform: none; }
 
       header {
-        padding: var(--space);
+        text-align: center;
+        padding: clamp(2rem, 6vw, 4rem) var(--space) clamp(1.5rem, 4vw, 3rem);
+      }
+
+      .avatar {
+        width: 112px; height: 112px;
+        margin: 0 auto 1.25rem;
+        border-radius: 50%;
+        display: grid; place-items: center;
+        font-size: 2.4rem; font-weight: 700;
+        color: #0b0f17;
+        background: linear-gradient(135deg, var(--color-accent), var(--color-accent-2));
+        box-shadow: 0 10px 40px rgba(88, 166, 255, 0.35);
+        animation: pulse 4s ease-in-out infinite;
+      }
+      @keyframes pulse {
+        0%, 100% { box-shadow: 0 10px 40px rgba(88, 166, 255, 0.30); }
+        50% { box-shadow: 0 14px 54px rgba(163, 113, 247, 0.45); }
       }
 
       header h1 {
         margin: 0;
-        color: var(--color-text);
+        font-size: clamp(2rem, 6vw, 3.1rem);
+        letter-spacing: -0.02em;
+        background: linear-gradient(90deg, var(--color-text), var(--color-accent));
+        -webkit-background-clip: text; background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+      header .role {
+        margin: 0.6rem 0 0;
+        color: var(--color-muted);
+        font-size: clamp(1rem, 3vw, 1.2rem);
+        letter-spacing: 0.04em;
+      }
+      .badge {
+        display: inline-block;
+        margin-top: 1rem;
+        padding: 0.35rem 0.9rem;
+        font-size: 0.85rem;
+        color: var(--color-accent);
+        border: 1px solid var(--color-border);
+        border-radius: 999px;
+        background: rgba(88, 166, 255, 0.08);
       }
 
-      header p {
-        margin: 0;
-        color: var(--color-muted);
+      .section-title {
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        letter-spacing: 0.2em;
+        color: var(--color-accent);
+        margin: 0 0 1rem;
+      }
+
+      .about {
+        background: var(--color-surface);
+        border: 1px solid var(--color-border);
+        border-radius: var(--radius);
+        padding: clamp(1.4rem, 4vw, 2.2rem);
+        backdrop-filter: blur(10px);
+        margin-bottom: var(--space);
+      }
+      .about p { margin: 0; color: var(--color-muted); }
+      .about p + p { margin-top: 0.8rem; }
+
+      main {
+        display: grid;
+        gap: var(--space);
+        grid-template-columns: 1fr;
+        padding: 0 0 var(--space);
       }
 
       .card {
         background: var(--color-surface);
-        padding: var(--space);
+        border: 1px solid var(--color-border);
+        border-radius: var(--radius);
+        padding: clamp(1.3rem, 3.5vw, 1.8rem);
+        backdrop-filter: blur(10px);
+        transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
       }
-
-      .card h2 {
-        margin: 0 0 0.5rem;
-        color: var(--color-text);
+      .card:hover {
+        transform: translateY(-6px);
+        border-color: rgba(88, 166, 255, 0.45);
+        box-shadow: 0 18px 50px rgba(0, 0, 0, 0.45);
       }
-
-      .card p {
-        margin: 0 0 0.75rem;
-        color: var(--color-muted);
+      .card .icon {
+        font-size: 1.6rem;
+        display: inline-grid; place-items: center;
+        width: 48px; height: 48px;
+        border-radius: 12px;
+        margin-bottom: 0.8rem;
+        background: linear-gradient(135deg, rgba(88,166,255,0.18), rgba(163,113,247,0.18));
       }
+      .card h2 { margin: 0 0 0.4rem; font-size: 1.15rem; color: var(--color-text); }
+      .card p { margin: 0; color: var(--color-muted); font-size: 0.97rem; }
 
-      .card a {
-        color: var(--color-accent);
+      @media (min-width: 640px) {
+        main { grid-template-columns: repeat(3, 1fr); }
       }
 
       footer {
-        padding: var(--space);
+        text-align: center;
+        padding: clamp(1.5rem, 4vw, 2.5rem) var(--space) var(--space);
       }
-
-      footer a {
+      .links {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.8rem;
+        justify-content: center;
+      }
+      .links a {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.7rem 1.15rem;
+        color: var(--color-text);
+        text-decoration: none;
+        border: 1px solid var(--color-border);
+        border-radius: 12px;
+        background: var(--color-surface);
+        backdrop-filter: blur(8px);
+        transition: transform 0.25s ease, border-color 0.25s ease, color 0.25s ease, background 0.25s ease;
+      }
+      .links a:hover {
+        transform: translateY(-3px);
         color: var(--color-accent);
+        border-color: rgba(88, 166, 255, 0.5);
+        background: rgba(88, 166, 255, 0.1);
       }
-
-      /* Accessibility: clearly visible keyboard focus indicator on all links,
-         using the single accent token. Focus styling is never removed without
-         this visible replacement. */
-      a:focus-visible {
+      .links a:focus-visible {
         outline: 2px solid var(--color-accent);
-        outline-offset: 2px;
+        outline-offset: 3px;
+      }
+      .copyright {
+        margin-top: 1.4rem;
+        color: var(--color-muted);
+        font-size: 0.85rem;
       }
 
-      @media (min-width: 481px) {
-        main {
-          grid-template-columns: repeat(3, 1fr); /* three equal columns >480px */
+      @media (prefers-reduced-motion: reduce) {
+        *, *::before, *::after {
+          animation: none !important;
+          transition: none !important;
+          scroll-behavior: auto !important;
         }
+        .reveal { opacity: 1; transform: none; }
       }
     </style>
   </head>
   <body>
-    <header>
-      <h1>Edzlee M. Codera</h1>
-      <p>Student</p>
-    </header>
-    <main>
-      <article class="card">
-        <h2>Atlas Analytics Dashboard</h2>
-        <p>A real-time analytics dashboard that turns raw event streams into clear, actionable metrics for product teams.</p>
-        <a href="https://github.com/edzleecodera-pixel">View project</a>
-      </article>
-      <article class="card">
-        <h2>Beacon Notifications API</h2>
-        <p>A fault-tolerant notification service that delivers email, SMS, and push messages with guaranteed ordering.</p>
-        <a href="https://github.com/edzleecodera-pixel">View project</a>
-      </article>
-      <article class="card">
-        <h2>Cartography Route Planner</h2>
-        <p>An interactive route planner that computes optimal multi-stop journeys across large geospatial datasets.</p>
-        <a href="https://github.com/edzleecodera-pixel">View project</a>
-      </article>
-    </main>
-    <footer>
-      <a href="mailto:jordan.avery@example.com">Email</a>
-      <a href="https://github.com/jordanavery" target="_blank" rel="noopener noreferrer">GitHub</a>
-      <a href="https://www.linkedin.com/in/jordanavery" target="_blank" rel="noopener noreferrer">LinkedIn</a>
-    </footer>
+    <div class="orb one" aria-hidden="true"></div>
+    <div class="orb two" aria-hidden="true"></div>
+
+    <div class="wrap">
+      <header class="reveal">
+        <div class="avatar" aria-hidden="true">EC</div>
+        <h1>Edzlee M. Codera</h1>
+        <p class="role">Student</p>
+        <span class="badge">Aspiring Developer - Always Learning</span>
+      </header>
+
+      <section class="about reveal" aria-label="About">
+        <p class="section-title">About</p>
+        <p>Hi, I am Edzlee - a student passionate about technology and building things for the web. I am currently learning to code and growing my skills one project at a time.</p>
+        <p>This portfolio is just getting started. Check back soon as I add the projects I am working on.</p>
+      </section>
+
+      <main aria-label="Highlights">
+        <article class="card reveal">
+          <div class="icon" aria-hidden="true">&#128218;</div>
+          <h2>Learning</h2>
+          <p>Diving into web development - HTML, CSS, and JavaScript - and expanding from there.</p>
+        </article>
+        <article class="card reveal">
+          <div class="icon" aria-hidden="true">&#128161;</div>
+          <h2>Curious</h2>
+          <p>I enjoy figuring out how things work and turning ideas into something real.</p>
+        </article>
+        <article class="card reveal">
+          <div class="icon" aria-hidden="true">&#128640;</div>
+          <h2>Building</h2>
+          <p>Projects are on the way. This space will grow as I create and ship more.</p>
+        </article>
+      </main>
+
+      <footer class="reveal">
+        <p class="section-title">Get in touch</p>
+        <div class="links">
+          <a href="mailto:coderaedzlee@gmail.com">&#9993; Email</a>
+          <a href="https://github.com/edzleecodera-pixel" target="_blank" rel="noopener noreferrer">&#128187; GitHub</a>
+          <a href="https://www.linkedin.com/in/edzlee-codera-03a27142b" target="_blank" rel="noopener noreferrer">&#128100; LinkedIn</a>
+        </div>
+        <p class="copyright">&#169; 2025 Edzlee M. Codera</p>
+      </footer>
+    </div>
+
+    <script>
+      // Scroll-reveal: add .visible when each .reveal element enters the viewport.
+      (function () {
+        var els = document.querySelectorAll(".reveal");
+        if (!("IntersectionObserver" in window)) {
+          els.forEach(function (el) { el.classList.add("visible"); });
+          return;
+        }
+        var io = new IntersectionObserver(function (entries) {
+          entries.forEach(function (entry, i) {
+            if (entry.isIntersecting) {
+              entry.target.style.transitionDelay = (i * 80) + "ms";
+              entry.target.classList.add("visible");
+              io.unobserve(entry.target);
+            }
+          });
+        }, { threshold: 0.12 });
+        els.forEach(function (el) { io.observe(el); });
+      })();
+    </script>
   </body>
 </html>
