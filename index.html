@@ -413,6 +413,245 @@
       .links a:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 3px; }
       .copyright { margin-top: 1.4rem; color: var(--color-muted); font-size: 0.85rem; }
 
+      /* =====================================================
+         CYBER MASCOT: "Sentinel"
+         ===================================================== */
+
+      /* particle layer (hearts, sparks, binary trail) */
+      #fx { position: fixed; inset: 0; z-index: 59; pointer-events: none; overflow: hidden; }
+      #fx.off { display: none; }
+      .fx {
+        position: absolute;
+        font-weight: 700; line-height: 1; white-space: nowrap;
+        pointer-events: none;
+        will-change: transform, opacity;
+        animation: fxMove 900ms ease-out forwards;
+      }
+      .fx.glyph {
+        font-family: "Cascadia Code", "Fira Code", Consolas, monospace;
+        font-size: 12px;
+        color: var(--color-accent-3);
+        text-shadow: 0 0 8px var(--color-accent-3);
+      }
+      .fx.heart { font-size: 17px; }
+      .fx.spark { font-size: 15px; color: var(--color-accent); text-shadow: 0 0 10px currentColor; }
+      .fx.ring {
+        width: 14px; height: 14px;
+        border-radius: 50%;
+        border: 2px solid var(--color-accent);
+        box-shadow: 0 0 14px rgba(88,166,255,0.6);
+        animation: ringOut 650ms ease-out forwards;
+      }
+      @keyframes fxMove {
+        from { opacity: 1; transform: translate(-50%, -50%) scale(1) rotate(0deg); }
+        to   { opacity: 0; transform: translate(calc(-50% + var(--dx, 0px)), calc(-50% + var(--dy, -30px))) scale(0.5) rotate(var(--rot, 0deg)); }
+      }
+      @keyframes ringOut {
+        from { opacity: 0.9; transform: translate(-50%, -50%) scale(0.4); }
+        to   { opacity: 0;   transform: translate(-50%, -50%) scale(5); }
+      }
+
+      /* mascot shell */
+      #buddy {
+        position: fixed; left: 0; top: 0;
+        width: 96px; height: 120px;
+        z-index: 60;
+        pointer-events: none;
+        touch-action: none;
+        opacity: 0;
+        transition: opacity 0.6s ease;
+        will-change: transform;
+      }
+      #buddy.ready { opacity: 1; }
+      #buddy.off { display: none; }
+      #buddy .lean, #buddy .bob { width: 100%; height: 100%; }
+      #buddy .lean { transform-origin: 50% 80%; will-change: transform; }
+      #buddy .bob { animation: bob 2.6s ease-in-out infinite; }
+      #buddy .bob.hop { animation: hop 0.6s ease-out; }
+      #buddy .bob.flip { animation: flip360 0.8s ease-in-out; }
+
+      @keyframes bob {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-6px); }
+      }
+      @keyframes hop {
+        0%   { transform: translateY(0) scale(1, 1); }
+        30%  { transform: translateY(-26px) scale(0.92, 1.1); }
+        60%  { transform: translateY(0) scale(1.1, 0.88); }
+        80%  { transform: translateY(-6px) scale(1, 1); }
+        100% { transform: translateY(0) scale(1, 1); }
+      }
+      @keyframes flip360 {
+        from { transform: perspective(500px) rotateY(0deg); }
+        to   { transform: perspective(500px) rotateY(360deg); }
+      }
+
+      #buddy svg {
+        display: block;
+        width: 100%; height: 100%;
+        overflow: visible;
+        pointer-events: none;
+        filter: drop-shadow(0 10px 12px rgba(0,0,0,0.45)) drop-shadow(0 0 14px rgba(88,166,255,0.35));
+        transition: filter 0.4s ease;
+        -webkit-tap-highlight-color: transparent;
+      }
+      #buddy .hit { pointer-events: auto; cursor: grab; }
+      #buddy .hit:active { cursor: grabbing; }
+      #buddy[data-stealth="1"] svg {
+        filter: hue-rotate(-70deg) saturate(1.25) drop-shadow(0 10px 12px rgba(0,0,0,0.5)) drop-shadow(0 0 16px rgba(61,220,151,0.7));
+      }
+
+      /* thruster flame */
+      #buddy .thruster {
+        transform-box: fill-box; transform-origin: 50% 0;
+        transform: scaleY(var(--thrust, 1));
+      }
+      #buddy .flame {
+        transform-box: fill-box; transform-origin: 50% 0;
+        animation: flame 0.16s ease-in-out infinite alternate;
+      }
+      @keyframes flame {
+        from { transform: scale(1, 0.8); }
+        to   { transform: scale(0.88, 1.2); }
+      }
+
+      /* antenna */
+      #buddy .antenna-tip, #buddy .ping { transform-box: fill-box; transform-origin: center; }
+      #buddy .antenna-tip { animation: tipPulse 1.6s ease-in-out infinite; }
+      #buddy .ping { animation: tipPing 1.6s ease-out infinite; }
+      @keyframes tipPulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.5; transform: scale(0.7); } }
+      @keyframes tipPing  { 0% { opacity: 0.8; transform: scale(1); } 100% { opacity: 0; transform: scale(3.2); } }
+
+      /* eyes */
+      #buddy .eye { transform-box: fill-box; transform-origin: center; animation: eyeBlink 5.5s infinite; }
+      #buddy .eye.e2 { animation-delay: 0.06s; }
+      @keyframes eyeBlink {
+        0%, 92%, 100% { transform: scaleY(1); }
+        95% { transform: scaleY(0.08); }
+      }
+
+      /* moods */
+      #buddy .mouth > *,
+      #buddy .eyes-happy,
+      #buddy .scan-g,
+      #buddy .shades,
+      #buddy .zzz { display: none; }
+
+      #buddy[data-mood="normal"] .m-smile,
+      #buddy[data-mood="scan"] .m-flat,
+      #buddy[data-mood="sleepy"] .m-flat,
+      #buddy[data-mood="happy"] .m-open,
+      #buddy[data-mood="surprised"] .m-o { display: inline; }
+
+      #buddy[data-mood="happy"] .eyes { display: none; }
+      #buddy[data-mood="happy"] .eyes-happy { display: inline; }
+      #buddy .cheek { opacity: 0.45; transition: opacity 0.3s ease; }
+      #buddy[data-mood="happy"] .cheek { opacity: 0.9; }
+
+      #buddy[data-mood="scan"] .eye { animation: none; transform: scaleY(0.55); }
+      #buddy[data-mood="scan"] .scan-g { display: inline; }
+      #buddy .beam { animation: beamSweep 0.9s ease-in-out infinite alternate; }
+      @keyframes beamSweep { from { transform: translateY(0); } to { transform: translateY(40px); } }
+
+      #buddy[data-mood="sleepy"] .eye { animation: none; transform: scaleY(0.14); }
+      #buddy[data-mood="sleepy"] .zzz { display: inline; }
+      #buddy .zzz text {
+        font: 700 11px "Segoe UI", sans-serif;
+        fill: var(--color-muted);
+        opacity: 0;
+        transform-box: fill-box; transform-origin: center;
+        animation: zFloat 2.4s ease-in infinite;
+      }
+      #buddy .zzz text:nth-child(2) { animation-delay: 0.8s; }
+      #buddy .zzz text:nth-child(3) { animation-delay: 1.6s; }
+      @keyframes zFloat {
+        0%   { opacity: 0; transform: translate(0, 6px) scale(0.6); }
+        30%  { opacity: 1; }
+        100% { opacity: 0; transform: translate(8px, -18px) scale(1.2); }
+      }
+
+      #buddy[data-mood="surprised"] .eye { animation: none; transform: scale(1.12); }
+
+      #buddy[data-mood="happy"] .hand-r { animation: handWave 0.35s ease-in-out infinite alternate; }
+      #buddy[data-mood="happy"] .hand-l { animation: handWave 0.35s ease-in-out 0.17s infinite alternate; }
+      @keyframes handWave { from { transform: translateY(0); } to { transform: translateY(-10px); } }
+
+      #buddy[data-stealth="1"] .shades { display: inline; }
+
+      /* speech bubble */
+      #buddy .bubble {
+        position: absolute;
+        left: 50%; bottom: calc(100% + 4px);
+        width: max-content; max-width: 150px;
+        padding: 0.55rem 0.8rem;
+        font: 600 0.78rem/1.35 "Cascadia Code", "Fira Code", Consolas, monospace;
+        text-align: center;
+        color: var(--color-text);
+        background: rgba(10, 16, 28, 0.94);
+        border: 1px solid rgba(88,166,255,0.55);
+        border-radius: 12px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.5), 0 0 18px rgba(88,166,255,0.25);
+        opacity: 0;
+        pointer-events: none;
+        transform-origin: 50% 100%;
+        transform: translateX(calc(-50% + var(--bx, 0px))) translateY(6px) scale(0.85);
+        transition: opacity 0.25s ease, transform 0.3s cubic-bezier(.2,.9,.3,1.4);
+      }
+      #buddy .bubble.show { opacity: 1; transform: translateX(calc(-50% + var(--bx, 0px))) translateY(0) scale(1); }
+      #buddy .bubble::after {
+        content: "";
+        position: absolute;
+        left: calc(50% - var(--bx, 0px)); bottom: -6px;
+        width: 10px; height: 10px; margin-left: -5px;
+        background: inherit;
+        border-right: 1px solid rgba(88,166,255,0.55);
+        border-bottom: 1px solid rgba(88,166,255,0.55);
+        transform: rotate(45deg);
+      }
+      #buddy .bubble.below { bottom: auto; top: calc(100% + 4px); transform-origin: 50% 0; }
+      #buddy .bubble.below::after { bottom: auto; top: -6px; transform: rotate(225deg); }
+
+      /* on/off toggle */
+      .buddy-toggle {
+        position: fixed; left: 16px; bottom: 16px;
+        z-index: 70;
+        width: 44px; height: 44px;
+        display: grid; place-items: center;
+        font-size: 1.2rem;
+        color: var(--color-text);
+        border: 1px solid var(--color-border);
+        border-radius: 14px;
+        background: var(--color-surface);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        cursor: pointer;
+        transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease, opacity 0.25s ease;
+      }
+      .buddy-toggle:hover { transform: translateY(-3px); border-color: rgba(88,166,255,0.5); box-shadow: 0 10px 26px rgba(88,166,255,0.3); }
+      .buddy-toggle:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 3px; }
+      .buddy-toggle[aria-pressed="false"] { opacity: 0.55; filter: grayscale(1); }
+
+      /* tucked against the edge: only a sliver shows, and it never takes clicks from the text */
+      #buddy.peek .hit { pointer-events: none; cursor: default; }
+      #buddy.peek .bubble { display: none; }
+      #buddy .lean { transition: opacity 0.3s ease; }
+      #buddy.peek .lean { opacity: 0.85; }
+
+      /* crossing over text while it travels: see-through and click-through, never hiding anything */
+      #buddy.ghost .lean { opacity: 0.22; }
+      #buddy.ghost .hit { pointer-events: none; }
+      #buddy.ghost .bubble { display: none; }
+
+      /* narrow screens: leave empty room at the end of the page so Sentinel has somewhere to sit */
+      @media (max-width: 1150px) {
+        .wrap { padding-bottom: 12rem; }
+      }
+
+      @media (max-width: 600px) {
+        #buddy { width: 76px; height: 95px; }
+        #buddy .bubble { max-width: 150px; font-size: 0.72rem; }
+      }
+
       @media (hover: none) { .cursor-glow { display: none; } }
 
       @media (prefers-reduced-motion: reduce) {
@@ -553,6 +792,134 @@
       </footer>
     </div>
 
+    <!-- ========== CYBER MASCOT: Sentinel ========== -->
+    <div id="fx" aria-hidden="true"></div>
+
+    <div id="buddy" data-mood="normal" data-stealth="0" aria-hidden="true">
+      <div class="bubble" id="buddyBubble"></div>
+      <div class="lean" id="buddyLean">
+        <div class="bob" id="buddyBob">
+          <svg viewBox="0 0 120 150" xmlns="http://www.w3.org/2000/svg" focusable="false">
+            <defs>
+              <linearGradient id="bdShield" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0" stop-color="#6db4ff"/>
+                <stop offset="1" stop-color="#a371f7"/>
+              </linearGradient>
+              <linearGradient id="bdFlame" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0" stop-color="#e9fff5"/>
+                <stop offset="0.45" stop-color="#3ddc97"/>
+                <stop offset="1" stop-color="#3ddc97" stop-opacity="0"/>
+              </linearGradient>
+              <radialGradient id="bdScreen" cx="0.5" cy="0.35" r="0.8">
+                <stop offset="0" stop-color="#1a2a47"/>
+                <stop offset="1" stop-color="#080d18"/>
+              </radialGradient>
+              <linearGradient id="bdBeam" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0" stop-color="#3ddc97" stop-opacity="0"/>
+                <stop offset="1" stop-color="#3ddc97" stop-opacity="0.7"/>
+              </linearGradient>
+              <clipPath id="bdClip"><rect x="28" y="38" width="64" height="46" rx="14"/></clipPath>
+            </defs>
+
+            <!-- thruster flame -->
+            <g class="thruster">
+              <path class="flame" d="M52 122 Q60 148 68 122 Z" fill="url(#bdFlame)"/>
+            </g>
+
+            <!-- clickable body -->
+            <g class="hit" id="buddyHit">
+              <!-- antenna -->
+              <line x1="60" y1="15" x2="60" y2="6" stroke="#8fc2ff" stroke-width="3" stroke-linecap="round"/>
+              <circle class="ping" cx="60" cy="5" r="4" fill="none" stroke="#3ddc97" stroke-width="1.5"/>
+              <circle class="antenna-tip" cx="60" cy="5" r="4" fill="#3ddc97"/>
+
+              <!-- headset ears -->
+              <rect x="9" y="46" width="12" height="28" rx="6" fill="#16233b" stroke="#58a6ff" stroke-width="2"/>
+              <rect x="99" y="46" width="12" height="28" rx="6" fill="#16233b" stroke="#58a6ff" stroke-width="2"/>
+
+              <!-- shield body -->
+              <path d="M60 14 L102 28 V66 C102 94 84 114 60 124 C36 114 18 94 18 66 V28 Z"
+                    fill="url(#bdShield)" stroke="#dbeaff" stroke-opacity="0.55" stroke-width="2" stroke-linejoin="round"/>
+              <path d="M60 22 L95 33 V66 C95 90 79 107 60 116 C41 107 25 90 25 66 V33 Z"
+                    fill="none" stroke="#ffffff" stroke-opacity="0.28" stroke-width="1.5"/>
+
+              <!-- face screen -->
+              <rect x="28" y="38" width="64" height="46" rx="14" fill="url(#bdScreen)" stroke="#3ddc97" stroke-opacity="0.7" stroke-width="1.5"/>
+              <text x="34" y="45" font-size="5" fill="#3ddc97" opacity="0.5" font-family="monospace">01</text>
+              <text x="81" y="45" font-size="5" fill="#3ddc97" opacity="0.5" font-family="monospace">10</text>
+
+              <!-- eyes -->
+              <g class="eyes">
+                <g class="eye e1">
+                  <circle cx="46" cy="58" r="10" fill="#f4f8ff"/>
+                  <g class="pupil" id="pupilL">
+                    <circle cx="46" cy="58" r="6.2" fill="#3ddc97"/>
+                    <circle cx="46" cy="58" r="3.4" fill="#06101a"/>
+                    <circle cx="43.8" cy="55.6" r="1.9" fill="#ffffff"/>
+                  </g>
+                </g>
+                <g class="eye e2">
+                  <circle cx="74" cy="58" r="10" fill="#f4f8ff"/>
+                  <g class="pupil" id="pupilR">
+                    <circle cx="74" cy="58" r="6.2" fill="#3ddc97"/>
+                    <circle cx="74" cy="58" r="3.4" fill="#06101a"/>
+                    <circle cx="71.8" cy="55.6" r="1.9" fill="#ffffff"/>
+                  </g>
+                </g>
+              </g>
+              <path class="eyes-happy" d="M37 61 Q46 49 55 61 M65 61 Q74 49 83 61" fill="none" stroke="#3ddc97" stroke-width="4.5" stroke-linecap="round"/>
+
+              <!-- cheeks + mouth -->
+              <circle class="cheek" cx="35" cy="73" r="4.5" fill="#ff7aa8"/>
+              <circle class="cheek" cx="85" cy="73" r="4.5" fill="#ff7aa8"/>
+              <g class="mouth">
+                <path class="m-smile" d="M53 73 Q60 80 67 73" fill="none" stroke="#3ddc97" stroke-width="2.6" stroke-linecap="round"/>
+                <path class="m-open" d="M52 72 Q60 87 68 72 Z" fill="#ff7aa8" stroke="#3ddc97" stroke-width="2" stroke-linejoin="round"/>
+                <path class="m-flat" d="M55 76 H65" fill="none" stroke="#3ddc97" stroke-width="2.6" stroke-linecap="round"/>
+                <ellipse class="m-o" cx="60" cy="76" rx="3.4" ry="4" fill="#06101a" stroke="#3ddc97" stroke-width="2"/>
+              </g>
+
+              <!-- scanner beam (scan mood) -->
+              <g class="scan-g" clip-path="url(#bdClip)">
+                <rect class="beam" x="28" y="36" width="64" height="10" fill="url(#bdBeam)"/>
+                <rect class="beam" x="28" y="44" width="64" height="1.6" fill="#baffe0"/>
+              </g>
+
+              <!-- sunglasses (stealth mode) -->
+              <g class="shades">
+                <rect x="30" y="50" width="28" height="17" rx="7" fill="#04070d" stroke="#3ddc97" stroke-width="1.5"/>
+                <rect x="62" y="50" width="28" height="17" rx="7" fill="#04070d" stroke="#3ddc97" stroke-width="1.5"/>
+                <rect x="57" y="54" width="6" height="3" fill="#3ddc97"/>
+                <path d="M35 54 L42 54 M67 54 L74 54" stroke="#ffffff" stroke-opacity="0.5" stroke-width="1.5" stroke-linecap="round"/>
+              </g>
+
+              <!-- padlock chest badge -->
+              <g class="lock">
+                <path d="M55 99 V95 a5 5 0 0 1 10 0 V99" fill="none" stroke="#e9eef6" stroke-width="2.4" stroke-linecap="round"/>
+                <rect x="51" y="98" width="18" height="14" rx="3.5" fill="#0a1220" stroke="#3ddc97" stroke-width="1.6"/>
+                <circle cx="60" cy="103.5" r="2" fill="#3ddc97"/>
+                <rect x="59.2" y="104" width="1.6" height="4.5" rx="0.8" fill="#3ddc97"/>
+              </g>
+
+              <!-- hands -->
+              <circle class="hand hand-l" cx="11" cy="90" r="6.5" fill="#16233b" stroke="#58a6ff" stroke-width="2"/>
+              <circle class="hand hand-r" cx="109" cy="90" r="6.5" fill="#16233b" stroke="#58a6ff" stroke-width="2"/>
+            </g>
+
+            <!-- sleepy zzz -->
+            <g class="zzz">
+              <text x="84" y="22">z</text>
+              <text x="92" y="14">Z</text>
+              <text x="99" y="6">z</text>
+            </g>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <button class="buddy-toggle" id="buddyToggle" type="button" aria-pressed="true"
+            aria-label="Toggle Sentinel the cyber mascot" title="Toggle Sentinel the cyber mascot">&#128737;&#65039;</button>
+
     <script>
       (function () {
         var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -688,6 +1055,511 @@
         resize();
         window.addEventListener("resize", resize);
         if (reduce) { draw = function () {}; } else { draw(); }
+      })();
+    </script>
+
+    <!-- ========== Sentinel the cyber mascot: behaviour ========== -->
+    <script>
+      (function () {
+        var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+        var buddy  = document.getElementById("buddy");
+        var lean   = document.getElementById("buddyLean");
+        var bob    = document.getElementById("buddyBob");
+        var bubble = document.getElementById("buddyBubble");
+        var hit    = document.getElementById("buddyHit");
+        var fx     = document.getElementById("fx");
+        var toggle = document.getElementById("buddyToggle");
+        var wrapEl = document.querySelector(".wrap");
+        var pupils = [document.getElementById("pupilL"), document.getElementById("pupilR")];
+        if (!buddy || !hit || !fx || !wrapEl) return;
+
+        function rnd(a, b) { return a + Math.random() * (b - a); }
+        function clamp(v, a, b) { return Math.max(a, Math.min(b, v)); }
+
+        /* ---- geometry ---- */
+        var W = window.innerWidth, H = window.innerHeight, SW = 96, SH = 120;
+        function measure() {
+          W = window.innerWidth; H = window.innerHeight;
+          SW = buddy.offsetWidth || 96; SH = buddy.offsetHeight || 120;
+        }
+        measure();
+
+        /* Sentinel starts just off the right edge and glides in to its first free spot. */
+        var x = W + 10, y = H - SH - 16;
+        var vx = 0, vy = 0, tx = x, ty = y;
+        var mouse = { x: W / 2, y: H / 2 };   // only used so the eyes can glance at the pointer
+
+        /* ---- state ---- */
+        var on = true;
+        try { if (localStorage.getItem("sentinel") === "off") on = false; } catch (err) {}
+        var mood = "", flashMood = "", flashUntil = 0;
+        var hovered = false, scanning = false, asleep = false, stealth = false;
+        var peek = false, ghost = false;
+        var dragging = false, dragMoved = false, suppressClick = false;
+        var dragDX = 0, dragDY = 0, downX = 0, downY = 0;
+        var lastAct = performance.now();
+        var IDLE_MS = 12000;
+        var heartTimer = 0;
+        var nextRoam = performance.now() + 2500;
+
+        /* ---- where the text is ---- */
+        var rects = [], rectsAt = 0, rectsDirty = true;
+        var BOX_SEL = ".chip, .badge, .btn, .links a, .avatar-wrap, .card .icon";
+
+        function refreshRects(force) {
+          var now = performance.now();
+          if (!force && !rectsDirty && now - rectsAt < 200) return;
+          rectsAt = now; rectsDirty = false;
+          rects.length = 0;
+
+          var tw = document.createTreeWalker(wrapEl, NodeFilter.SHOW_TEXT, null);
+          var range = document.createRange();
+          var node;
+          while ((node = tw.nextNode())) {
+            if (!/\S/.test(node.nodeValue)) continue;
+            range.selectNodeContents(node);
+            var list = range.getClientRects();
+            for (var i = 0; i < list.length; i++) {
+              var r = list[i];
+              if (r.width > 0 && r.height > 0 && r.bottom > -60 && r.top < H + 60) {
+                rects.push({ l: r.left, t: r.top, r: r.right, b: r.bottom });
+              }
+            }
+          }
+          var boxes = document.querySelectorAll(BOX_SEL);
+          for (var j = 0; j < boxes.length; j++) {
+            var br = boxes[j].getBoundingClientRect();
+            if (br.width > 0 && br.height > 0 && br.bottom > -60 && br.top < H + 60) {
+              rects.push({ l: br.left, t: br.top, r: br.right, b: br.bottom });
+            }
+          }
+          var tb = toggle.getBoundingClientRect();
+          rects.push({ l: tb.left, t: tb.top, r: tb.right, b: tb.bottom });
+        }
+
+        function hitsText(L, T, R, B) {
+          for (var i = 0; i < rects.length; i++) {
+            var q = rects[i];
+            if (q.r > L && q.l < R && q.b > T && q.t < B) return true;
+          }
+          return false;
+        }
+        /* the mascot's body, or its body plus the room its speech bubble needs */
+        function bodyHits(px, py) { return hitsText(px - 4, py - 4, px + SW + 4, py + SH + 4); }
+        function spotHits(px, py) {
+          var cx = px + SW / 2;
+          return hitsText(cx - 81, py - 66, cx + 81, py + SH + 6);
+        }
+
+        function freeSpots() {
+          var spots = [];
+          var minX = 8, maxX = W - SW - 8, minY = 84, maxY = H - SH - 8;
+          for (var yy = minY; yy <= maxY; yy += 28) {
+            for (var xx = minX; xx <= maxX; xx += 28) {
+              if (!spotHits(xx, yy)) spots.push([xx, yy]);
+            }
+          }
+          return spots;
+        }
+
+        function goPeek() {
+          if (!peek) {
+            peek = true;
+            hovered = false;
+            clearInterval(heartTimer);
+            bubble.classList.remove("show");
+            bubbleOn = false;
+            buddy.classList.add("peek");
+          }
+          tx = W - 34; ty = clamp(y, 84, Math.max(84, H - SH - 16));
+        }
+        function leavePeek() {
+          if (peek) { peek = false; buddy.classList.remove("peek"); }
+        }
+
+        /* choose somewhere that is clear of text and glide there */
+        function pickSpot(nearest) {
+          refreshRects(true);
+          var spots = freeSpots();
+          if (!spots.length) { goPeek(); return; }
+          var pick, i;
+          if (nearest) {
+            var best = 1e12;
+            for (i = 0; i < spots.length; i++) {
+              var ddx = spots[i][0] - x, ddy = spots[i][1] - y, dd = ddx * ddx + ddy * ddy;
+              if (dd < best) { best = dd; pick = spots[i]; }
+            }
+          } else {
+            var far = spots.filter(function (s) {
+              var ddx = s[0] - x, ddy = s[1] - y;
+              return ddx * ddx + ddy * ddy > 140 * 140;
+            });
+            var pool = far.length ? far : spots;
+            pick = pool[Math.floor(Math.random() * pool.length)];
+          }
+          leavePeek();
+          tx = pick[0]; ty = pick[1];
+        }
+
+        /* ---- speech ---- */
+        var bubbleOn = false, bubbleTimer = 0;
+        function say(msg, ms) {
+          if (!on || peek || ghost) return;
+          bubble.textContent = msg;
+          bubble.classList.add("show");
+          bubbleOn = true;
+          clearTimeout(bubbleTimer);
+          bubbleTimer = setTimeout(function () {
+            bubble.classList.remove("show");
+            bubbleOn = false;
+          }, ms || 3500);
+        }
+
+        var tips = [
+          "Use a unique password for every account \u{1F511}",
+          "Turn on 2FA. It blocks most account takeovers! \u{1F4F1}",
+          "Think before you click: check the link first \u{1F50D}",
+          "Keep your software updated. Patches matter! \u{1FA79}",
+          "Phishing sign: urgency + a weird sender \u{1F3A3}",
+          "Use a password manager. Your brain is not a vault \u{1F9E0}",
+          "On public Wi-Fi? Use a VPN or your own hotspot \u{1F4F6}",
+          "Back up your data with the 3-2-1 rule \u{1F4BE}",
+          "Least privilege: only give the access that's needed \u{1F6E1}️",
+          "Never share your OTP with anyone. Ever! \u{1F6AB}",
+          "A padlock in the address bar = encrypted, not always trusted \u{1F512}",
+          "Psst... double-click me for stealth mode \u{1F576}️",
+          "You can drag me anywhere you like! \u{1F449}"
+        ];
+        var petLines = [
+          "Hehe, that tickles! \u{1F496}",
+          "Pets detected. Morale +100 \u{1F49A}",
+          "I'm a good guard, right? \u{1F6E1}️"
+        ];
+        var tipOrder = [], tipI = 0;
+        function nextTip() {
+          if (tipI >= tipOrder.length) {
+            tipOrder = tips.map(function (_, i) { return i; }).sort(function () { return Math.random() - 0.5; });
+            tipI = 0;
+          }
+          return tips[tipOrder[tipI++]];
+        }
+
+        /* ---- particles ---- */
+        function spawn(txt, px, py, cls, dx, dy, dur, color) {
+          if (reduce || !on) return;
+          if (fx.childElementCount > 70) return;
+          var s = document.createElement("span");
+          s.className = "fx " + cls;
+          s.textContent = txt;
+          s.style.left = px + "px";
+          s.style.top = py + "px";
+          s.style.setProperty("--dx", dx + "px");
+          s.style.setProperty("--dy", dy + "px");
+          s.style.setProperty("--rot", rnd(-90, 90).toFixed(0) + "deg");
+          if (dur) s.style.animationDuration = dur + "ms";
+          if (color) s.style.color = color;
+          s.addEventListener("animationend", function () { s.remove(); });
+          fx.appendChild(s);
+        }
+        var sparkChars = ["✦", "+", "✧"];
+        var sparkColors = ["#58a6ff", "#a371f7", "#3ddc97"];
+        function burst(cx, cy, n) {
+          spawn("", cx, cy, "ring", 0, 0, 650);
+          for (var i = 0; i < n; i++) {
+            var a = (i / n) * Math.PI * 2 + rnd(-0.3, 0.3);
+            var dist = rnd(28, 62);
+            spawn(sparkChars[i % 3], cx, cy, "spark",
+                  Math.cos(a) * dist, Math.sin(a) * dist, rnd(600, 900), sparkColors[i % 3]);
+          }
+        }
+        function heart() {
+          spawn(Math.random() < 0.5 ? "\u{1F496}" : "\u{1F49A}",
+                x + SW / 2 + rnd(-22, 22), y + SH * 0.2,
+                "heart", rnd(-14, 14), rnd(-80, -50), 1300);
+        }
+
+        /* ---- animation helpers ---- */
+        function play(cls) {
+          bob.classList.remove("hop", "flip");
+          void bob.offsetWidth;
+          bob.classList.add(cls);
+        }
+        bob.addEventListener("animationend", function (e) {
+          if (e.target === bob && (e.animationName === "hop" || e.animationName === "flip360")) {
+            bob.classList.remove("hop", "flip");
+          }
+        });
+        function flash(m, ms) { flashMood = m; flashUntil = performance.now() + ms; }
+
+        function render(now) {
+          var m = "normal";
+          if (now < flashUntil) m = flashMood;
+          else if (hovered) m = "happy";
+          else if (scanning) m = "scan";
+          else if (asleep) m = "sleepy";
+          if (m !== mood) { mood = m; buddy.setAttribute("data-mood", m); }
+        }
+
+        /* ---- activity (the mouse only moves the eyes) ---- */
+        function act() {
+          if (asleep) {
+            asleep = false;
+            nextRoam = performance.now() + 1500;
+            say("Oh, you're back! \u{1F440}", 2200);
+          }
+          lastAct = performance.now();
+        }
+        window.addEventListener("pointermove", function (e) {
+          mouse.x = e.clientX; mouse.y = e.clientY;
+          act();
+          if (dragging) {
+            if (!dragMoved && Math.abs(e.clientX - downX) + Math.abs(e.clientY - downY) > 6) {
+              dragMoved = true;
+              bubble.classList.remove("show");
+              bubbleOn = false;
+            }
+            if (dragMoved) {
+              x = clamp(e.clientX - dragDX, 0, W - SW);
+              y = clamp(e.clientY - dragDY, 0, H - SH);
+              tx = x; ty = y; vx = 0; vy = 0;
+              flash("surprised", 150);
+            }
+          }
+        }, { passive: true });
+        function endDrag() {
+          if (!dragging) return;
+          dragging = false;
+          if (dragMoved) {
+            suppressClick = true;
+            setTimeout(function () { suppressClick = false; }, 60);
+            refreshRects(true);
+            if (bodyHits(x, y)) pickSpot(true);     // dropped on text: slide to the nearest clear spot
+            nextRoam = performance.now() + 5000;
+          }
+        }
+        window.addEventListener("pointerup", endDrag);
+        window.addEventListener("pointercancel", endDrag);
+        window.addEventListener("touchstart", act, { passive: true });
+        window.addEventListener("scroll", function () { rectsDirty = true; act(); }, { passive: true });
+        window.addEventListener("keydown", act);
+        window.addEventListener("resize", function () {
+          measure();
+          rectsDirty = true;
+          pickSpot(true);
+        });
+
+        /* ---- main loop ---- */
+        var lastT = performance.now(), lastTrail = 0, lastCheck = 0;
+        function frame(now) {
+          var step = Math.min((now - lastT) / 16.667, 3);
+          lastT = now;
+
+          if (on) {
+            refreshRects(false);
+
+            /* wake / sleep */
+            var idle = (now - lastAct) > IDLE_MS;
+            if (idle && !asleep) { asleep = true; say("Zzz… \u{1F634}", 2600); }
+
+            /* if text has moved onto its destination (scrolling), pick another spot */
+            if (!dragging && !hovered && now - lastCheck > 250) {
+              lastCheck = now;
+              if (peek || spotHits(tx, ty)) pickSpot(false);
+            }
+
+            /* wander to a new clear spot every few seconds */
+            var arrived = Math.abs(tx - x) < 8 && Math.abs(ty - y) < 8;
+            if (!reduce && !dragging && !hovered && !asleep && !peek && arrived && now >= nextRoam) {
+              pickSpot(false);
+              nextRoam = now + rnd(3500, 7500);
+            }
+
+            /* movement */
+            if (reduce) {
+              if (!dragging) { x = tx; y = ty; vx = 0; vy = 0; }
+            } else if (!dragging) {
+              vx += (tx - x) * 0.035 * step;
+              vy += (ty - y) * 0.035 * step;
+              var damp = Math.pow(0.8, step);
+              vx *= damp; vy *= damp;
+              x += vx * step; y += vy * step;
+            }
+            var speed = Math.sqrt(vx * vx + vy * vy);
+
+            /* crossing over text? become a see-through ghost so nothing is hidden */
+            var g = !peek && !dragging && bodyHits(x, y);
+            if (g !== ghost) {
+              ghost = g;
+              buddy.classList.toggle("ghost", g);
+              if (g) { bubble.classList.remove("show"); bubbleOn = false; }
+            }
+
+            buddy.style.transform = "translate3d(" + x.toFixed(1) + "px," + y.toFixed(1) + "px,0)";
+            if (!reduce) {
+              var rot = clamp(vx * 1.4, -18, 18);
+              var st = Math.min(speed * 0.02, 0.2);
+              lean.style.transform = "rotate(" + rot.toFixed(2) + "deg) scale(" + (1 - st * 0.45).toFixed(3) + "," + (1 + st).toFixed(3) + ")";
+              buddy.style.setProperty("--thrust", (1 + Math.min(speed * 0.12, 1.6)).toFixed(2));
+            }
+
+            /* eyes glance at the pointer */
+            var ex = x + SW / 2, ey = y + SH * 0.39;
+            var dx = mouse.x - ex, dy = mouse.y - ey;
+            var d = Math.sqrt(dx * dx + dy * dy) || 1;
+            var m = Math.min(3.6, d / 18);
+            var tr = "translate(" + ((dx / d) * m).toFixed(2) + "px," + ((dy / d) * m).toFixed(2) + "px)";
+            pupils[0].style.transform = tr;
+            pupils[1].style.transform = tr;
+
+            /* binary trail while it flies around (only over empty space) */
+            if (!reduce && !peek && !ghost && speed > 2.2 && now - lastTrail > 70) {
+              lastTrail = now;
+              var gx = x + SW / 2 + rnd(-12, 12), gy = y + SH - 8;
+              if (!hitsText(gx - 8, gy - 20, gx + 8, gy + 8)) {
+                spawn(Math.random() < 0.5 ? "0" : "1", gx, gy, "glyph", rnd(-8, 8), rnd(-34, -12), rnd(700, 1000));
+              }
+            }
+
+            /* keep the speech bubble on screen */
+            if (bubbleOn) {
+              var half = bubble.offsetWidth / 2;
+              var cx = x + SW / 2;
+              var cl = clamp(cx, 8 + half, Math.max(8 + half, W - 8 - half));
+              bubble.style.setProperty("--bx", (cl - cx).toFixed(1) + "px");
+              bubble.classList.toggle("below", y < 70);
+            }
+
+            render(now);
+          }
+          requestAnimationFrame(frame);
+        }
+
+        /* ---- interactions with the mascot ---- */
+        hit.addEventListener("pointerenter", function () {
+          if (peek || ghost || dragging) return;
+          hovered = true;
+          tx = x; ty = y;                      // stop and let itself be petted
+          clearInterval(heartTimer);
+          heart();
+          heartTimer = setInterval(heart, 420);
+          say(petLines[Math.floor(Math.random() * petLines.length)], 2200);
+        });
+        hit.addEventListener("pointerleave", function () {
+          hovered = false;
+          clearInterval(heartTimer);
+          nextRoam = performance.now() + 1500;
+        });
+        hit.addEventListener("pointerdown", function (e) {
+          if (peek || ghost || (e.button !== undefined && e.button > 0)) return;
+          dragging = true; dragMoved = false;
+          downX = e.clientX; downY = e.clientY;
+          dragDX = e.clientX - x; dragDY = e.clientY - y;
+        });
+        hit.addEventListener("click", function () {
+          if (peek || ghost || suppressClick) return;
+          act();
+          play("hop");
+          flash("surprised", 350);
+          burst(x + SW / 2, y + SH / 2, 8);
+          say(nextTip(), 4200);
+        });
+        hit.addEventListener("dblclick", function () {
+          if (peek || ghost || suppressClick) return;
+          stealth = !stealth;
+          buddy.setAttribute("data-stealth", stealth ? "1" : "0");
+          play("flip");
+          say(stealth ? "Stealth mode: ON. Nobody sees me coming. \u{1F576}️"
+                      : "Stealth mode: OFF. Back to cute! \u{1F6E1}️", 3200);
+        });
+
+        /* ---- link scanner ---- */
+        var scanLink = null, scanTimer = 0;
+        document.addEventListener("mouseover", function (e) {
+          var a = e.target.closest && e.target.closest("a[href]");
+          if (!a || a === scanLink || !on || peek || ghost) return;
+          scanLink = a;
+          scanning = true;
+          say("Scanning link… \u{1F50D}", 1400);
+          clearTimeout(scanTimer);
+          scanTimer = setTimeout(function () {
+            if (scanLink) say("All clear! No threats found ✅", 2600);
+            scanning = false;
+          }, 1100);
+        });
+        document.addEventListener("mouseout", function (e) {
+          var a = e.target.closest && e.target.closest("a[href]");
+          if (a && a === scanLink && !a.contains(e.relatedTarget)) {
+            scanLink = null;
+            scanning = false;
+            clearTimeout(scanTimer);
+          }
+        });
+
+        /* ---- comments as you scroll through sections ---- */
+        if ("IntersectionObserver" in window) {
+          var said = {};
+          var lines = [
+            ["about",   ".about",  "That's Edzlee! A future cybersecurity pro in the making \u{1F4AA}"],
+            ["stack",   "#stack",  "Python, GitHub, VSCode... a solid toolbox! \u{1F6E0}️"],
+            ["skills",  "#skills", "Automation + logic = a defender's superpowers ⚡"],
+            ["contact", "#contact","Say hi to Edzlee! These links look safe to me ✅"]
+          ];
+          var sio = new IntersectionObserver(function (entries) {
+            entries.forEach(function (en) {
+              if (!en.isIntersecting) return;
+              var key = en.target.getAttribute("data-buddy");
+              if (said[key]) return;
+              var msg = en.target.getAttribute("data-buddy-msg");
+              setTimeout(function () {
+                if (said[key] || peek || ghost || asleep || hovered) return;
+                said[key] = true;
+                say(msg, 3600);
+              }, 600);
+            });
+          }, { threshold: 0.2, rootMargin: "0px 0px -20% 0px" });
+          lines.forEach(function (l) {
+            var el = document.querySelector(l[1]);
+            if (!el) return;
+            el.setAttribute("data-buddy", l[0]);
+            el.setAttribute("data-buddy-msg", l[2]);
+            sio.observe(el);
+          });
+        }
+
+        /* ---- on/off toggle ---- */
+        function applyOn() {
+          buddy.classList.toggle("off", !on);
+          fx.classList.toggle("off", !on);
+          toggle.setAttribute("aria-pressed", on ? "true" : "false");
+        }
+        toggle.addEventListener("click", function () {
+          on = !on;
+          try { localStorage.setItem("sentinel", on ? "on" : "off"); } catch (err) {}
+          applyOn();
+          if (on) {
+            lastAct = performance.now();
+            nextRoam = lastAct + 3000;
+            buddy.classList.add("ready");
+            pickSpot(true);
+            if (!peek) {
+              burst(x + SW / 2, y + SH / 2, 8);
+              say("Back on duty! \u{1F6E1}️", 2400);
+            }
+          }
+        });
+        applyOn();
+
+        /* ---- go! ---- */
+        pickSpot(false);
+        requestAnimationFrame(frame);
+        setTimeout(function () {
+          if (on) buddy.classList.add("ready");
+        }, 300);
+        setTimeout(function () {
+          if (!on || peek || ghost) return;
+          say("Hi, I'm Sentinel! \u{1F6E1}️ Click me for tips, or drag me around!", 4200);
+        }, 1800);
       })();
     </script>
   </body>
